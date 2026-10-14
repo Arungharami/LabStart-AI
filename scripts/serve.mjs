@@ -1,0 +1,3 @@
+import http from 'node:http'; import {readFile} from 'node:fs/promises'; import {resolve,extname} from 'node:path';
+const root=resolve('dist'); const types={'.html':'text/html','.js':'text/javascript','.css':'text/css','.svg':'image/svg+xml'};
+http.createServer(async(req,res)=>{try{const path=resolve(root,'.'+decodeURIComponent(new URL(req.url,'http://localhost').pathname)); if(!path.startsWith(root+'/')) throw Error(); const target=path.endsWith('/')?path+'index.html':path; const data=await readFile(target); res.writeHead(200,{'Content-Type':types[extname(target)]||'text/plain'}); res.end(data);}catch{res.writeHead(404);res.end('Not found');}}).listen(3000,()=>console.log('http://localhost:3000'));
